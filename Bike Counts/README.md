@@ -20,4 +20,4 @@ Python 2 and 3 both work for this. Use [pip](https://pip.pypa.io/en/stable/) to 
 
 ## Usage
 
-Just run python3 demo.py to see the results.
+Just run python3 Bike_counts.py to see the results.
