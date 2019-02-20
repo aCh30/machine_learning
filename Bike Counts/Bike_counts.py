@@ -1,18 +1,38 @@
 import pandas as pd
 from sklearn import linear_model,preprocessing,model_selection
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, cm as cm
 import seaborn as sns
 
 
-df=pd.read_csv("day.csv")
+df=pd.read_csv("C:/Users/chatua7/Desktop/project/ML/Bike Sharing Datset/day.csv")
 #df.head() 
 df.dropna() 
 #print(df["season"].unique())
 
 #Considering every non-working day is a holiday (dropping weekday column), if its a non-working day, then holiday= 1
-mask=df.workingday=0
-column_name='holiday'
-df.loc[mask,column_name]=1
+if (len(df[(df['workingday']==1) & (df['holiday']==1)]))==0:
+    print("Good to go")
+df.loc[df['workingday']==0,'holiday']=1
+#df.loc[df['workingday']==1,'holiday']=0
+
+
+def plot_corr(df,size=10):
+    '''Function plots a graphical correlation matrix for each pair of columns in the dataframe.
+
+    Input:
+        df: pandas DataFrame
+        size: vertical and horizontal size of the plot'''
+
+    corr = df.corr() # dataframe correlation function
+    fig, ax = plt.subplots(figsize=(size, size))
+    ax.matshow(corr, cmap=cm.jet) #color codes the rectangles by correlation function
+    plt.xticks(range(len(corr.columns)), corr.columns);
+    plt.yticks(range(len(corr.columns)), corr.columns);
+    plt.tight_layout()
+    plt.show()
+    #print(df.corr())
+    
+plot_corr(df)
 
 #Defining feature dataset. Dropping the columns that do not affect the value of count of bikes booked on a particular day and the target column.
 X=df.drop(df[['instant','dteday','mnth','weekday','workingday','atemp','windspeed','casual','registered','cnt']],axis=1)
@@ -21,14 +41,14 @@ X['weathersit']=X['weathersit'].map({1:'000', 2:'001', 3:'010'})
 X['yr']=X['yr'].map({0:'00', 1:'01'})
 X['season']=X['season'].map({1:'000', 2:'001', 3:'010', 4: '100'})
 
-#Scaling temperature and humidity variables
+#Scaling temp and hum variables
 X[['temp','hum']]=preprocessing.scale(X[['temp','hum']]) 
 
-print(X) 
+print(X.head()) 
 
 #Defining target dataset.
 Y=df['cnt']
-print(Y)
+print(Y.head())
 
 
 #Variation of count with the change in season
@@ -103,7 +123,7 @@ plt.tight_layout()
 lr=linear_model.LinearRegression()
 
 #Dividing data into train and test with 4:1 ratio and train the model using the training sets.
-X_train, X_test, Y_train, Y_test= model_selection.train_test_split(X,Y,test_size=0.2, random_state=6)
+X_train, X_test, Y_train, Y_test= model_selection.train_test_split(X,Y,test_size=0.2, random_state=42)
 lr.fit(X_train,Y_train)
 
 #Regression coefficients 
@@ -124,4 +144,3 @@ plt.hlines(xmin=0,xmax=9000,y=0,linewidth=2, color='black')
 
 plt.legend(loc = 'upper right') 
 plt.title("Residual errors")
-
