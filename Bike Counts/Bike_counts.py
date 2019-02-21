@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt, cm as cm
 import seaborn as sns
 
 
-df=pd.read_csv("C:/Users/chatua7/Desktop/project/ML/Bike Sharing Datset/day.csv")
+df=pd.read_csv("day.csv")
 #df.head() 
 df.dropna() 
 #print(df["season"].unique())
